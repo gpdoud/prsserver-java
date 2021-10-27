@@ -35,6 +35,8 @@ public class RequestlinesController {
 		}
 		request.setTotal(total);
 		reqRepo.save(request);
+		System.out.printf("INFO: Recalc total is %6.2f\n", total.doubleValue());
+		System.err.printf("ERROR: Recalc total is %6.2f\n", total.doubleValue());
 	}
 	
 	// Standard Methods
