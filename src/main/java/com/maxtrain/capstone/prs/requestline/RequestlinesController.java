@@ -27,13 +27,13 @@ public class RequestlinesController {
 		}
 		var request = optRequest.get();
 		var requestlines = reqlRepo.findRequestlineByRequestId(requestId);
-		var total = 0.0;
+		var total = BigDecimal.ZERO;
 		for(var requestline : requestlines) {
-			var quantity = requestline.getQuantity();
-			var price = requestline.getProduct().getPrice().doubleValue();
-			total += quantity * price;
+			var quantity = BigDecimal.valueOf(requestline.getQuantity());
+			var price = requestline.getProduct().getPrice();
+			total = total.add(quantity.multiply(price));
 		}
-		request.setTotal(BigDecimal.valueOf(total));
+		request.setTotal(total);
 		reqRepo.save(request);
 	}
 	
