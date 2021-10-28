@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import com.maxtrain.capstone.prs.product.ProductRepository;
 import com.maxtrain.capstone.prs.request.RequestRepository;
 
 @CrossOrigin
@@ -17,6 +18,8 @@ public class RequestlinesController {
 	private RequestlineRepository reqlRepo;
 	@Autowired
 	private RequestRepository reqRepo;
+	@Autowired 
+	private ProductRepository prodRepo;
 
 	// Custom Methods
 	
@@ -29,14 +32,19 @@ public class RequestlinesController {
 		var requestlines = reqlRepo.findRequestlineByRequestId(requestId);
 		var total = BigDecimal.ZERO;
 		for(var requestline : requestlines) {
+			if(requestline.getProduct().getPrice() == null) {
+				var prodId = requestline.getProduct().getId();
+				var product = prodRepo.findById(prodId).get();
+				requestline.setProduct(product);
+			}
 			var quantity = BigDecimal.valueOf(requestline.getQuantity());
 			var price = requestline.getProduct().getPrice();
 			total = total.add(quantity.multiply(price));
 		}
 		request.setTotal(total);
 		reqRepo.save(request);
-		System.out.printf("INFO: Recalc total is %6.2f\n", total.doubleValue());
-		System.err.printf("ERROR: Recalc total is %6.2f\n", total.doubleValue());
+		//System.out.printf("INFO: Recalc total is %6.2f\n", total.doubleValue());
+		//System.err.printf("ERROR: Recalc total is %6.2f\n", total.doubleValue());
 	}
 	
 	// Standard Methods
@@ -61,7 +69,8 @@ public class RequestlinesController {
 		if(requestline == null) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
-		var newReq = reqlRepo.save(requestline);
+		var newReq = reqlRepo.saveAndFlush(requestline);
+		
 		RecalculateRequestTotal(requestline.getRequest().getId());
 		return new ResponseEntity<Requestline>(newReq, HttpStatus.CREATED);
 	}
