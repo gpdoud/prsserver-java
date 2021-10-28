@@ -20,6 +20,22 @@ public class UsersController {
 	@Autowired
 	private UserRepository userRepo;
 	
+	@GetMapping("test/{username}/{password}")
+	public ResponseEntity<User> Login2(@PathVariable String username, @PathVariable String password) {
+		var user = userRepo.findByLogin(username, password);
+		if(user == null) {
+			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<User>(user, HttpStatus.OK);
+	}
+	
+	@GetMapping("lastname/{lastname}")
+	public ResponseEntity<Iterable<User>> GetByLastname(@PathVariable String lastname) {
+		var users = userRepo.findByLastname(lastname);
+		return new ResponseEntity<Iterable<User>>(users, HttpStatus.OK);
+	}
+	
+	
 	@GetMapping("{username}/{password}")
 	public ResponseEntity<User> Login(@PathVariable String username, @PathVariable String password) {
 		var user = userRepo.findByUsernameAndPassword(username, password);
