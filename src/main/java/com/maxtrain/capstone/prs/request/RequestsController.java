@@ -1,6 +1,5 @@
 package com.maxtrain.capstone.prs.request;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.*;
@@ -33,7 +32,7 @@ public class RequestsController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		
-		var status = request.getTotal().compareTo(BigDecimal.valueOf(50)) < 1 ? "APPROVED" : "REVIEW";
+		var status = request.getTotal() <= 50 ? "APPROVED" : "REVIEW";
 		request.setStatus(status);
 		return ChangeRequest(request.getId(), request);
 	}

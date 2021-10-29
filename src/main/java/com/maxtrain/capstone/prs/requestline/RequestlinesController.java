@@ -1,7 +1,5 @@
 package com.maxtrain.capstone.prs.requestline;
 
-import java.math.BigDecimal;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,16 +28,13 @@ public class RequestlinesController {
 		}
 		var request = optRequest.get();
 		var requestlines = reqlRepo.findRequestlineByRequestId(requestId);
-		var total = BigDecimal.ZERO;
+		double total = 0;
 		for(var requestline : requestlines) {
-			if(requestline.getProduct().getPrice() == null) {
-				var prodId = requestline.getProduct().getId();
-				var product = prodRepo.findById(prodId).get();
+			if(requestline.getProduct().getPrice() == 0) {
+				var product = prodRepo.findById(requestline.getProduct().getId()).get();
 				requestline.setProduct(product);
 			}
-			var quantity = BigDecimal.valueOf(requestline.getQuantity());
-			var price = requestline.getProduct().getPrice();
-			total = total.add(quantity.multiply(price));
+			total += requestline.getQuantity() * requestline.getProduct().getPrice();
 		}
 		request.setTotal(total);
 		reqRepo.save(request);

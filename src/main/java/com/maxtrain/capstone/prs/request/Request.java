@@ -1,7 +1,5 @@
 package com.maxtrain.capstone.prs.request;
 
-import java.math.BigDecimal;
-
 import javax.persistence.*;
 
 import com.maxtrain.capstone.prs.user.User;
@@ -22,7 +20,7 @@ public class Request {
 	private String deliveryMode = "Pickup";
 	@Column(length=15, nullable=false)
 	private String status = "NEW";
-	private BigDecimal total = BigDecimal.ZERO;
+	private double total = 0;
 	
 	@ManyToOne(optional=false)
 	@JoinColumn(name = "userId")
@@ -78,11 +76,11 @@ public class Request {
 		this.status = status;
 	}
 
-	public BigDecimal getTotal() {
+	public double getTotal() {
 		return total;
 	}
 
-	public void setTotal(BigDecimal total) {
+	public void setTotal(double total) {
 		this.total = total;
 	}
 
